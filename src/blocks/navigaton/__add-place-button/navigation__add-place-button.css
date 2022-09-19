@@ -1,0 +1,24 @@
+.navigation__add-place-button {
+  margin: 0;
+  padding: 0;
+  width: 150px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: solid 2px #fff;
+  background: transparent;
+  box-sizing: content-box;
+  border-radius: 2px;
+  }
+
+  .navigation__add-place-button:checked {
+    border-color: red;
+  }
+
+  @media (max-width: 900px){
+    .navigation__add-place-button {
+      width: 282px;
+      margin-top: 36px;
+    }
+  }

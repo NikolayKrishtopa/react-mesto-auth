@@ -1,0 +1,6 @@
+.place-card__like-button_active {
+    background-image: url(../../../../images/like-icon_checked.svg);
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+  }

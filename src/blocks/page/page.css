@@ -1,0 +1,23 @@
+.page {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 0 100px;
+  box-sizing: border-box;
+  max-width: 1080px;
+  font-family: 'Inter', 'Arial', sans-serif;
+  position: relative;
+  transition: opacity 3s ease;
+}
+
+@media (max-width: 1080px) {
+  .page {
+    padding: 0 50px;
+  }
+}
+
+@media (max-width: 450px) {
+  .page {
+    padding: 0 19px;
+  }
+}

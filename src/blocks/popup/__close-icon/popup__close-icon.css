@@ -1,0 +1,4 @@
+.popup__close-icon {
+  width: 100%;
+  pointer-events: none;
+}
