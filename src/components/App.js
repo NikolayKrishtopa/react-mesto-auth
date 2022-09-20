@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import Main from './Main'
 import Footer from './Footer'
 import Header from './Header'
@@ -23,6 +23,90 @@ function App() {
   const [cards, setCards] = useState([])
   const [cardToRemove, setCardToRemove] = useState({})
   const [isSaving, setIsSaving] = useState(false)
+  const [isLogged, setIsLogged] = useState(false)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
+  const BASE_URL = 'https://auth.nomoreparties.co'
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    Promise.all([api.getInititalCards(), api.getUserInfo()])
+      .then(([cardsArr, userData]) => {
+        setCards(cardsArr)
+        setCurrentUser((old) => {
+          return { ...old, ...userData }
+        })
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false))
+  }, [])
+
+  useEffect(() => {
+    if (!localStorage.getItem('token')) {
+      navigate('/sign-in')
+      return
+    }
+    setIsLoading(true)
+    fetch(`${BASE_URL}/users/me`, {
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${localStorage.getItem('token')}`,
+      },
+      method: 'GET',
+    })
+      .then((res) => (res.ok ? res.json() : Promise.reject(res.statusText)))
+      .then((res) => {
+        setIsLogged(true)
+        setCurrentUser((old) => {
+          return { ...old, email: res.data.email }
+        })
+        navigate('/')
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false))
+  }, [localStorage.getItem('token')])
+
+  function handleSubmitRegistration() {
+    setIsLoading(true)
+    return fetch(`${BASE_URL}/signup`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({ password, email }),
+    })
+      .then((res) => res.ok && res.json())
+      .then(() => {
+        navigate('/sign-in')
+      })
+      .catch((err) => console.log(err))
+      .finally(() => setIsLoading(false))
+  }
+
+  function handleSubmitLogin() {
+    setIsLoading(true)
+    return fetch(`${BASE_URL}/signin`, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      method: 'POST',
+      body: JSON.stringify({ password, email }),
+    })
+      .then((res) => res.ok && res.json())
+      .then((res) => {
+        localStorage.setItem('token', res.token)
+        navigate('/')
+      })
+      .finally(() => setIsLoading(false))
+  }
+
+  function handleLogout() {
+    if (!localStorage.getItem('token')) return
+    localStorage.removeItem('token')
+    navigate('/sign-in')
+  }
 
   function handleCardLike(card, isLiked) {
     api
@@ -47,16 +131,6 @@ function App() {
       .catch((err) => console.log(err))
       .finally(() => setIsSaving(false))
   }
-
-  useEffect(() => {
-    Promise.all([api.getInititalCards(), api.getUserInfo()])
-      .then(([cardsArr, userData]) => {
-        setCards(cardsArr)
-        setCurrentUser(userData)
-      })
-      .catch((err) => console.log(err))
-      .finally(() => setIsLoading(false))
-  }, [])
 
   const isAnyPopupOpen =
     isEditAvatarPopupOpen ||
@@ -148,37 +222,57 @@ function App() {
       <div className="App">
         {isLoading && <PopupLoading />}
         <div className={`page ${isLoading && 'page_loading'}`}>
-          <BrowserRouter>
-            <Routes>
-              <Route
-                path="/sign-up"
-                element={
-                  <EntryForm
-                    linkTarget="/sign-in"
-                    linkText="Войти"
-                    buttonText="Зарегистрироваться"
-                    onSubmit=""
-                    title="Регистрация"
-                  />
-                }
-              />
-              <Route
-                path="/sign-in"
-                element={
-                  <EntryForm
-                    linkTarget="/sign-up"
-                    linkText="Регистрация"
-                    buttonText="Войти"
-                    onSubmit=""
-                    title="Вход"
-                  />
-                }
-              />
-              <Route
-                path="/"
-                element={
+          <Routes>
+            <Route
+              path="/sign-up"
+              element={
+                <EntryForm
+                  email={email}
+                  password={password}
+                  onEmailChange={setEmail}
+                  onPasswordChange={setPassword}
+                  linkTarget="/sign-in"
+                  linkText="Войти"
+                  buttonText="Зарегистрироваться"
+                  onSubmit={handleSubmitRegistration}
+                  title="Регистрация"
+                />
+              }
+            />
+            <Route
+              path="/sign-in"
+              element={
+                <EntryForm
+                  email={email}
+                  password={password}
+                  onEmailChange={setEmail}
+                  onPasswordChange={setPassword}
+                  linkTarget="/sign-up"
+                  linkText="Регистрация"
+                  buttonText="Войти"
+                  onSubmit={handleSubmitLogin}
+                  title="Вход"
+                />
+              }
+            />
+            <Route
+              path="/"
+              element={
+                isLogged ? (
                   <>
-                    <Header />
+                    <Header>
+                      <div>
+                        <span className="header__link">
+                          {currentUser.email}
+                        </span>
+                        <a
+                          className="header__link header__link_style_fade responsible-fade"
+                          onClick={handleLogout}
+                        >
+                          Выйти
+                        </a>
+                      </div>
+                    </Header>
                     <Main
                       onEditProfile={handleEditProfileClick}
                       onAddPlace={handleAddPlaceClick}
@@ -220,10 +314,12 @@ function App() {
                     <ImagePopup card={selectedCard} onClose={closeAllPopups} />
                     <Footer />
                   </>
-                }
-              />
-            </Routes>
-          </BrowserRouter>
+                ) : (
+                  <Navigate to="/sign-in" />
+                )
+              }
+            />
+          </Routes>
         </div>
       </div>
     </CurrentUserContext.Provider>
