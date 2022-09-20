@@ -1,0 +1,12 @@
+.entry-form__input {
+  margin: 0 0 17px 0;
+  padding: 13px 0;
+  font-size: 14px;
+  line-height: 1.21;
+  outline: none;
+  border: none;
+  background-color: transparent;
+  border-bottom: 2px solid #cccccc;
+  color: #fff;
+  width: 100%;
+}

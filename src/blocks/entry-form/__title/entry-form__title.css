@@ -1,0 +1,10 @@
+.entry-form__title {
+  margin: 0;
+  padding: 0 0 37px 0;
+  font-family: 'Inter';
+  font-size: 24px;
+  font-weight: 900;
+  line-height: 29px;
+  text-align: center;
+  color: #fff;
+}

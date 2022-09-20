@@ -1,0 +1,10 @@
+.entry-form__prompt {
+  margin: 15px 0 0 0;
+  padding: 0;
+  font-family: 'Inter';
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 17px;
+  text-align: center;
+  color: #fff;
+}

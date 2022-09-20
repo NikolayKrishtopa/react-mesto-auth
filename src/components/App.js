@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Routes, Route, BrowserRouter, Navigate } from 'react-router-dom'
 import Main from './Main'
 import Footer from './Footer'
 import Header from './Header'
@@ -10,6 +11,7 @@ import CurrentUserContext from '../contexts.js/CurrentUserContext'
 import EditProfilePopup from './EditProfilePopup'
 import AddPlacePopup from './AddPlacePopup'
 import EditAvatarPopup from './EditAvatarPopup'
+import EntryForm from './EntryForm'
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
@@ -146,47 +148,82 @@ function App() {
       <div className="App">
         {isLoading && <PopupLoading />}
         <div className={`page ${isLoading && 'page_loading'}`}>
-          <Header />
-          <Main
-            onEditProfile={handleEditProfileClick}
-            onAddPlace={handleAddPlaceClick}
-            onEditAvatar={handleEditAvatarClick}
-            onCardClick={handleCardClick}
-            onRemoveClick={handleRemoveClick}
-            cards={cards}
-            onCardLike={handleCardLike}
-          />
-          <EditProfilePopup
-            isOpen={isEditProfilePopupOpen}
-            onClose={closeAllPopups}
-            onUpdateUser={handleUpdateUser}
-            isSaving={isSaving}
-            onEditAvatar={handleUpdateAvatar}
-          />
-          <EditAvatarPopup
-            isOpen={isEditAvatarPopupOpen}
-            onClose={closeAllPopups}
-            isSaving={isSaving}
-            onEditAvatar={handleUpdateAvatar}
-          />
-          <AddPlacePopup
-            isOpen={isAddPlacePopupOpen}
-            onClose={closeAllPopups}
-            onAddCard={handleAddCard}
-            isSaving={isSaving}
-          />
-          <PopupWithForm
-            name="confirm"
-            title="Вы уверены?"
-            isOpen={cardToRemove.link}
-            onClose={closeAllPopups}
-            onSubmit={handleCardDelete}
-            buttonText="Да"
-            isSaving={isSaving}
-            isValid={true}
-          />
-          <ImagePopup card={selectedCard} onClose={closeAllPopups} />
-          <Footer />
+          <BrowserRouter>
+            <Routes>
+              <Route
+                path="/sign-up"
+                element={
+                  <EntryForm
+                    linkTarget="/sign-in"
+                    linkText="Войти"
+                    buttonText="Зарегистрироваться"
+                    onSubmit=""
+                    title="Регистрация"
+                  />
+                }
+              />
+              <Route
+                path="/sign-in"
+                element={
+                  <EntryForm
+                    linkTarget="/sign-up"
+                    linkText="Регистрация"
+                    buttonText="Войти"
+                    onSubmit=""
+                    title="Вход"
+                  />
+                }
+              />
+              <Route
+                path="/"
+                element={
+                  <>
+                    <Header />
+                    <Main
+                      onEditProfile={handleEditProfileClick}
+                      onAddPlace={handleAddPlaceClick}
+                      onEditAvatar={handleEditAvatarClick}
+                      onCardClick={handleCardClick}
+                      onRemoveClick={handleRemoveClick}
+                      cards={cards}
+                      onCardLike={handleCardLike}
+                    />
+                    <EditProfilePopup
+                      isOpen={isEditProfilePopupOpen}
+                      onClose={closeAllPopups}
+                      onUpdateUser={handleUpdateUser}
+                      isSaving={isSaving}
+                      onEditAvatar={handleUpdateAvatar}
+                    />
+                    <EditAvatarPopup
+                      isOpen={isEditAvatarPopupOpen}
+                      onClose={closeAllPopups}
+                      isSaving={isSaving}
+                      onEditAvatar={handleUpdateAvatar}
+                    />
+                    <AddPlacePopup
+                      isOpen={isAddPlacePopupOpen}
+                      onClose={closeAllPopups}
+                      onAddCard={handleAddCard}
+                      isSaving={isSaving}
+                    />
+                    <PopupWithForm
+                      name="confirm"
+                      title="Вы уверены?"
+                      isOpen={cardToRemove.link}
+                      onClose={closeAllPopups}
+                      onSubmit={handleCardDelete}
+                      buttonText="Да"
+                      isSaving={isSaving}
+                      isValid={true}
+                    />
+                    <ImagePopup card={selectedCard} onClose={closeAllPopups} />
+                    <Footer />
+                  </>
+                }
+              />
+            </Routes>
+          </BrowserRouter>
         </div>
       </div>
     </CurrentUserContext.Provider>

@@ -14,10 +14,6 @@ export default function PopupWithForm(props) {
     isValid,
   } = props
 
-  function handleCloseByEsc(evt) {
-    evt.key === 'Escape' && onClose()
-  }
-
   return (
     <div
       className={`popup popup_type_${name} ${isOpen && 'popup_active'}`}
