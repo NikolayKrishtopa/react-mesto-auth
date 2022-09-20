@@ -12,11 +12,13 @@ import EditProfilePopup from './EditProfilePopup'
 import AddPlacePopup from './AddPlacePopup'
 import EditAvatarPopup from './EditAvatarPopup'
 import EntryForm from './EntryForm'
+import PopupAlert from './PopupAlert'
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false)
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false)
+  const [alertPopupState, setAlertPopupState] = useState({})
   const [selectedCard, setSelectedCard] = useState({})
   const [isLoading, setIsLoading] = useState(true)
   const [currentUser, setCurrentUser] = useState({})
@@ -69,6 +71,7 @@ function App() {
   }, [localStorage.getItem('token')])
 
   function handleSubmitRegistration() {
+    setAlertPopupState((old) => ({ ...old, mode: 'register' }))
     setIsLoading(true)
     return fetch(`${BASE_URL}/signup`, {
       headers: {
@@ -78,14 +81,24 @@ function App() {
       body: JSON.stringify({ password, email }),
     })
       .then((res) => res.ok && res.json())
-      .then(() => {
-        navigate('/sign-in')
+      .then((res) => {
+        if (!!res.data) {
+          setAlertPopupState((old) => ({ ...old, success: true }))
+          navigate('./sign-in')
+        } else setAlertPopupState((old) => ({ ...old, success: false }))
       })
-      .catch((err) => console.log(err))
-      .finally(() => setIsLoading(false))
+      .catch((err) => {
+        console.log(err)
+        setAlertPopupState((old) => ({ ...old, success: true }))
+      })
+      .finally(() => {
+        setIsLoading(false)
+        setAlertPopupState((old) => ({ ...old, isOpen: true }))
+      })
   }
 
   function handleSubmitLogin() {
+    setAlertPopupState((old) => ({ ...old, mode: 'login' }))
     setIsLoading(true)
     return fetch(`${BASE_URL}/signin`, {
       headers: {
@@ -96,15 +109,26 @@ function App() {
     })
       .then((res) => res.ok && res.json())
       .then((res) => {
-        localStorage.setItem('token', res.token)
-        navigate('/')
+        if (!!res.token) {
+          localStorage.setItem('token', res.token)
+          navigate('./')
+          setAlertPopupState((old) => ({ ...old, success: true }))
+        } else setAlertPopupState((old) => ({ ...old, success: false }))
       })
-      .finally(() => setIsLoading(false))
+      .catch((err) => {
+        console.log(err)
+        setAlertPopupState((old) => ({ ...old, success: false }))
+      })
+      .finally(() => {
+        setIsLoading(false)
+        setAlertPopupState((old) => ({ ...old, isOpen: true }))
+      })
   }
 
   function handleLogout() {
     if (!localStorage.getItem('token')) return
     localStorage.removeItem('token')
+    setIsLogged(false)
     navigate('/sign-in')
   }
 
@@ -133,6 +157,7 @@ function App() {
   }
 
   const isAnyPopupOpen =
+    alertPopupState.isOpen ||
     isEditAvatarPopupOpen ||
     isEditProfilePopupOpen ||
     isAddPlacePopupOpen ||
@@ -163,6 +188,7 @@ function App() {
     setIsAddPlacePopupOpen(false)
     setSelectedCard({})
     setCardToRemove({})
+    setAlertPopupState({ ...alertPopupState, isOpen: false })
   }
 
   function handleEditAvatarClick() {
@@ -222,6 +248,12 @@ function App() {
       <div className="App">
         {isLoading && <PopupLoading />}
         <div className={`page ${isLoading && 'page_loading'}`}>
+          <PopupAlert
+            mode={alertPopupState.mode}
+            isOpen={alertPopupState.isOpen}
+            onClose={() => closeAllPopups()}
+            success={alertPopupState.success}
+          />
           <Routes>
             <Route
               path="/sign-up"

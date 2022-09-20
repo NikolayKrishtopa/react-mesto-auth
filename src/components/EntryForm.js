@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import { Link } from 'react-router-dom'
 import Header from './Header'
-import PopupAlert from './PopupAlert'
 
 export default function EntryForm(props) {
   const {
@@ -21,15 +20,8 @@ export default function EntryForm(props) {
     onSubmit()
   }
 
-  const [isAlertPopupOpen, setIsAlertPopupOpen] = useState(false)
   return (
     <>
-      <PopupAlert
-        mode={title}
-        isOpen={isAlertPopupOpen}
-        onClose={() => setIsAlertPopupOpen(false)}
-        success
-      />
       <Header>
         <Link to={linkTarget} className="header__link responsible-fade">
           {linkText}
@@ -37,7 +29,11 @@ export default function EntryForm(props) {
       </Header>
       <div className="entry-form">
         <h2 className="entry-form__title">{title}</h2>
-        <form className="entry-form__form" onSubmit={handleSubmitRequest}>
+        <form
+          className="entry-form__form"
+          onSubmit={handleSubmitRequest}
+          noValidate
+        >
           <input
             type="email"
             required

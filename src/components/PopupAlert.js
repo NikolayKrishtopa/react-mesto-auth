@@ -3,7 +3,7 @@ import successImg from '../images/success.png'
 import failureImg from '../images/failure.png'
 
 export default function PopupAlert(props) {
-  const { isOpen, onClose, success, mode } = props
+  const { isOpen, onClose, success, mode = 'login' } = props
 
   return (
     <div className={`popup ${isOpen && 'popup_active'}`} onMouseDown={onClose}>
@@ -31,7 +31,9 @@ export default function PopupAlert(props) {
           <p className="popup__alert-text">
             {success
               ? `Вы успешно ${
-                  mode === 'Регистрация' ? 'зарегистрировались' : 'вошли'
+                  mode === 'login'
+                    ? 'вошли в учётную запись'
+                    : 'зарегистрировались'
                 }!`
               : 'Что-то пошло не так! Попробуйте ещё раз.'}
           </p>
