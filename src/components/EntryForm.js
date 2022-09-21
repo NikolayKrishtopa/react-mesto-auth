@@ -1,24 +1,22 @@
-import { useState } from 'react'
+import { useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import Header from './Header'
+import useFormAndValidation from '../hooks/useFormAndValidation'
 
 export default function EntryForm(props) {
-  const {
-    linkTarget,
-    linkText,
-    buttonText,
-    onSubmit,
-    title,
-    email,
-    onEmailChange,
-    password,
-    onPasswordChange,
-  } = props
+  const { linkTarget, linkText, buttonText, onSubmit, title, navigate } = props
+
+  const { values, handleChange, errors, isValid, resetForm } =
+    useFormAndValidation()
 
   function handleSubmitRequest(e) {
     e.preventDefault()
-    onSubmit()
+    onSubmit(values.email, values.password)
   }
+
+  useEffect(() => {
+    resetForm()
+  }, [navigate])
 
   return (
     <>
@@ -36,21 +34,32 @@ export default function EntryForm(props) {
         >
           <input
             type="email"
+            name="email"
             required
+            minLength={2}
+            maxLength={20}
             placeholder="email"
             className="entry-form__input"
-            value={email}
-            onChange={(e) => onEmailChange(e.target.value)}
+            value={values.email ? values.email : ''}
+            onChange={handleChange}
           />
+          <p className="entry-form__input-error">{errors.email}</p>
           <input
             type="password"
+            name="password"
+            minLength={2}
+            maxLength={20}
             required
             placeholder="password"
             className="entry-form__input"
-            value={password}
-            onChange={(e) => onPasswordChange(e.target.value)}
+            value={values.password ? values.password : ''}
+            onChange={handleChange}
           />
-          <button className="entry-form__button responsible-fade">
+          <p className="entry-form__input-error">{errors.password}</p>
+          <button
+            className="entry-form__button responsible-fade"
+            disabled={!isValid}
+          >
             {buttonText}
           </button>
         </form>

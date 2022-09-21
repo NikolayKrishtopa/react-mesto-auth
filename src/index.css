@@ -65,5 +65,6 @@
 @import url(./blocks/entry-form/__prompt-link/entry-form__prompt-link.css);
 @import url(./blocks/entry-form/__prompt/entry-form__prompt.css);
 @import url(./blocks/entry-form/__title/entry-form__title.css);
+@import url(./blocks/entry-form/__input-error/entry-form__input-error.css);
 @import url(./blocks/top-bar/top-bar.css);
 @import url(./blocks/top-bar/_active/top-bar_active.css);

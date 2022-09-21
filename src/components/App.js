@@ -28,8 +28,6 @@ function App() {
   const [cardToRemove, setCardToRemove] = useState({})
   const [isSaving, setIsSaving] = useState(false)
   const [isLogged, setIsLogged] = useState(false)
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
   const [isTopBarOpen, setIsTopBarOpen] = useState(false)
 
   const BASE_URL = 'https://auth.nomoreparties.co'
@@ -73,7 +71,7 @@ function App() {
       .finally(() => setIsLoading(false))
   }, [localStorage.getItem('token')])
 
-  function handleSubmitRegistration() {
+  function handleSubmitRegistration(email, password) {
     setAlertPopupState((old) => ({ ...old, mode: 'register' }))
     setIsLoading(true)
     return fetch(`${BASE_URL}/signup`, {
@@ -100,17 +98,7 @@ function App() {
       })
   }
 
-  function clearForm() {
-    setEmail((old) => '')
-    setPassword((old) => '')
-    setIsTopBarOpen(false)
-  }
-
-  useEffect(() => {
-    clearForm()
-  }, [navigate])
-
-  function handleSubmitLogin() {
+  function handleSubmitLogin(email, password) {
     setAlertPopupState((old) => ({ ...old, mode: 'login' }))
     setIsLoading(true)
     return fetch(`${BASE_URL}/signin`, {
@@ -272,15 +260,12 @@ function App() {
               path="/sign-up"
               element={
                 <EntryForm
-                  email={email}
-                  password={password}
-                  onEmailChange={setEmail}
-                  onPasswordChange={setPassword}
                   linkTarget="/sign-in"
                   linkText="Войти"
                   buttonText="Зарегистрироваться"
                   onSubmit={handleSubmitRegistration}
                   title="Регистрация"
+                  navigate={navigate}
                 />
               }
             />
@@ -288,15 +273,12 @@ function App() {
               path="/sign-in"
               element={
                 <EntryForm
-                  email={email}
-                  password={password}
-                  onEmailChange={setEmail}
-                  onPasswordChange={setPassword}
                   linkTarget="/sign-up"
                   linkText="Регистрация"
                   buttonText="Войти"
                   onSubmit={handleSubmitLogin}
                   title="Вход"
+                  navigate={navigate}
                 />
               }
             />
