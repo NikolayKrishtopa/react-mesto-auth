@@ -1,0 +1,17 @@
+.header__button {
+  display: none;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  background-color: transparent;
+}
+
+@media (max-width: 550px) {
+  .header__button {
+    display: flex;
+  }
+}

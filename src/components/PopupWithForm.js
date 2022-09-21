@@ -1,5 +1,4 @@
 import closeIcon from '../images/close-icon.svg'
-import { useEffect } from 'react'
 
 export default function PopupWithForm(props) {
   const {

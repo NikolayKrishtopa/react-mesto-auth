@@ -1,0 +1,7 @@
+.top-bar {
+  display: none;
+  flex-direction: column;
+  padding: 40px 0;
+  gap: 18px;
+  align-items: center;
+}

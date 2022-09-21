@@ -1,0 +1,5 @@
+@media (max-width: 550px) {
+  .header__user-info {
+    display: none;
+  }
+}

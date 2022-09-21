@@ -1,3 +1,5 @@
+import closeIcon from '../images/close-icon.svg'
+import burgerButton from '../images/burgerButton.svg'
 import { useState, useEffect } from 'react'
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
 import Main from './Main'
@@ -28,6 +30,7 @@ function App() {
   const [isLogged, setIsLogged] = useState(false)
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
+  const [isTopBarOpen, setIsTopBarOpen] = useState(false)
 
   const BASE_URL = 'https://auth.nomoreparties.co'
 
@@ -94,7 +97,14 @@ function App() {
       .finally(() => {
         setIsLoading(false)
         setAlertPopupState((old) => ({ ...old, isOpen: true }))
+        clearForm()
       })
+  }
+
+  function clearForm() {
+    setEmail((old) => '')
+    setPassword((old) => '')
+    setIsTopBarOpen(false)
   }
 
   function handleSubmitLogin() {
@@ -122,6 +132,7 @@ function App() {
       .finally(() => {
         setIsLoading(false)
         setAlertPopupState((old) => ({ ...old, isOpen: true }))
+        clearForm()
       })
   }
 
@@ -130,6 +141,7 @@ function App() {
     localStorage.removeItem('token')
     setIsLogged(false)
     navigate('/sign-in')
+    clearForm()
   }
 
   function handleCardLike(card, isLiked) {
@@ -292,18 +304,42 @@ function App() {
               element={
                 isLogged ? (
                   <>
+                    <div
+                      className={`top-bar ${isTopBarOpen && 'top-bar_active'}`}
+                    >
+                      <span className="header__link">{currentUser.email}</span>
+                      <a
+                        href="#"
+                        className="header__link header__link_style_fade responsible-fade"
+                        onClick={handleLogout}
+                      >
+                        Выйти
+                      </a>
+                    </div>
                     <Header>
-                      <div>
+                      <div className="header__user-info">
                         <span className="header__link">
                           {currentUser.email}
                         </span>
                         <a
+                          href="#"
                           className="header__link header__link_style_fade responsible-fade"
                           onClick={handleLogout}
                         >
                           Выйти
                         </a>
                       </div>
+                      <button
+                        className="header__button responsible-fade"
+                        onClick={() => setIsTopBarOpen(!isTopBarOpen)}
+                      >
+                        <img
+                          className={`header__button-picture ${
+                            isTopBarOpen && 'header__button-picture_small'
+                          }`}
+                          src={isTopBarOpen ? closeIcon : burgerButton}
+                        />
+                      </button>
                     </Header>
                     <Main
                       onEditProfile={handleEditProfileClick}

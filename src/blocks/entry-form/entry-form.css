@@ -7,3 +7,9 @@
   align-items: center;
   justify-content: space-between;
 }
+
+@media (max-width: 470px) {
+  .entry-form {
+    width: 260px;
+  }
+}

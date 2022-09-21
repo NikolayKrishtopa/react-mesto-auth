@@ -8,3 +8,9 @@
   text-align: center;
   color: #fff;
 }
+
+@media (max-width: 470px) {
+  .entry-form__prompt {
+    margin: 20px 0 0 0;
+  }
+}
