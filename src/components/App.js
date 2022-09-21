@@ -92,12 +92,11 @@ function App() {
       })
       .catch((err) => {
         console.log(err)
-        setAlertPopupState((old) => ({ ...old, success: true }))
+        setAlertPopupState((old) => ({ ...old, success: false }))
       })
       .finally(() => {
         setIsLoading(false)
         setAlertPopupState((old) => ({ ...old, isOpen: true }))
-        clearForm()
       })
   }
 
@@ -106,6 +105,10 @@ function App() {
     setPassword((old) => '')
     setIsTopBarOpen(false)
   }
+
+  useEffect(() => {
+    clearForm()
+  }, [navigate])
 
   function handleSubmitLogin() {
     setAlertPopupState((old) => ({ ...old, mode: 'login' }))
@@ -132,7 +135,6 @@ function App() {
       .finally(() => {
         setIsLoading(false)
         setAlertPopupState((old) => ({ ...old, isOpen: true }))
-        clearForm()
       })
   }
 
@@ -141,7 +143,6 @@ function App() {
     localStorage.removeItem('token')
     setIsLogged(false)
     navigate('/sign-in')
-    clearForm()
   }
 
   function handleCardLike(card, isLiked) {
