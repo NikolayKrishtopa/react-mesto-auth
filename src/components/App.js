@@ -1,9 +1,8 @@
 import closeIcon from '../images/close-icon.svg'
 import burgerButton from '../images/burgerButton.svg'
 import { useState, useEffect } from 'react'
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom'
+import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom'
 import Main from './Main'
-import Footer from './Footer'
 import Header from './Header'
 import PopupWithForm from './PopupWithForm'
 import ImagePopup from './ImagePopup'
@@ -20,6 +19,7 @@ import {
   handleLogin,
   handleCheckAuth,
 } from '../utils/authRequests'
+import ProtectedRoute from './ProtectedRoute'
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
@@ -241,6 +241,54 @@ function App() {
               Выйти
             </a>
           </div>
+          <Header>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <>
+                    <div className="header__user-info">
+                      <span className="header__link">{currentUser.email}</span>
+                      <a
+                        href="#"
+                        className="header__link header__link_style_fade responsible-fade"
+                        onClick={handleLogout}
+                      >
+                        Выйти
+                      </a>
+                    </div>
+                    <button
+                      className="header__button responsible-fade"
+                      onClick={() => setIsTopBarOpen(!isTopBarOpen)}
+                    >
+                      <img
+                        className={`header__button-picture ${
+                          isTopBarOpen && 'header__button-picture_small'
+                        }`}
+                        src={isTopBarOpen ? closeIcon : burgerButton}
+                      />
+                    </button>
+                  </>
+                }
+              />
+              <Route
+                path="/sign-up"
+                element={
+                  <Link to="/sign-in" className="header__link responsible-fade">
+                    {'Войти'}
+                  </Link>
+                }
+              />
+              <Route
+                path="/sign-in"
+                element={
+                  <Link to="/sign-up" className="header__link responsible-fade">
+                    {'Зарегистрироваться'}
+                  </Link>
+                }
+              />
+            </Routes>
+          </Header>
           <PopupAlert
             mode={alertPopupState.mode}
             isOpen={alertPopupState.isOpen}
@@ -277,47 +325,17 @@ function App() {
             <Route
               path="/"
               element={
-                isLogged ? (
-                  <>
-                    <Header>
-                      <div className="header__user-info">
-                        <span className="header__link">
-                          {currentUser.email}
-                        </span>
-                        <a
-                          href="#"
-                          className="header__link header__link_style_fade responsible-fade"
-                          onClick={handleLogout}
-                        >
-                          Выйти
-                        </a>
-                      </div>
-                      <button
-                        className="header__button responsible-fade"
-                        onClick={() => setIsTopBarOpen(!isTopBarOpen)}
-                      >
-                        <img
-                          className={`header__button-picture ${
-                            isTopBarOpen && 'header__button-picture_small'
-                          }`}
-                          src={isTopBarOpen ? closeIcon : burgerButton}
-                        />
-                      </button>
-                    </Header>
-                    <Main
-                      onEditProfile={handleEditProfileClick}
-                      onAddPlace={handleAddPlaceClick}
-                      onEditAvatar={handleEditAvatarClick}
-                      onCardClick={handleCardClick}
-                      onRemoveClick={handleRemoveClick}
-                      cards={cards}
-                      onCardLike={handleCardLike}
-                    />
-                    <Footer />
-                  </>
-                ) : (
-                  <Navigate to="/sign-in" />
-                )
+                <ProtectedRoute
+                  onEditProfile={handleEditProfileClick}
+                  onAddPlace={handleAddPlaceClick}
+                  onEditAvatar={handleEditAvatarClick}
+                  onCardClick={handleCardClick}
+                  onRemoveClick={handleRemoveClick}
+                  cards={cards}
+                  onCardLike={handleCardLike}
+                  isLogged={isLogged}
+                  component={Main}
+                />
               }
             />
           </Routes>
