@@ -231,6 +231,16 @@ function App() {
       <div className="App">
         {isLoading && <PopupLoading />}
         <div className={`page ${isLoading && 'page_loading'}`}>
+          <div className={`top-bar ${isTopBarOpen && 'top-bar_active'}`}>
+            <span className="header__link">{currentUser.email}</span>
+            <a
+              href="#"
+              className="header__link header__link_style_fade responsible-fade"
+              onClick={handleLogout}
+            >
+              Выйти
+            </a>
+          </div>
           <PopupAlert
             mode={alertPopupState.mode}
             isOpen={alertPopupState.isOpen}
@@ -269,18 +279,6 @@ function App() {
               element={
                 isLogged ? (
                   <>
-                    <div
-                      className={`top-bar ${isTopBarOpen && 'top-bar_active'}`}
-                    >
-                      <span className="header__link">{currentUser.email}</span>
-                      <a
-                        href="#"
-                        className="header__link header__link_style_fade responsible-fade"
-                        onClick={handleLogout}
-                      >
-                        Выйти
-                      </a>
-                    </div>
                     <Header>
                       <div className="header__user-info">
                         <span className="header__link">
@@ -315,36 +313,6 @@ function App() {
                       cards={cards}
                       onCardLike={handleCardLike}
                     />
-                    <EditProfilePopup
-                      isOpen={isEditProfilePopupOpen}
-                      onClose={closeAllPopups}
-                      onUpdateUser={handleUpdateUser}
-                      isSaving={isSaving}
-                      onEditAvatar={handleUpdateAvatar}
-                    />
-                    <EditAvatarPopup
-                      isOpen={isEditAvatarPopupOpen}
-                      onClose={closeAllPopups}
-                      isSaving={isSaving}
-                      onEditAvatar={handleUpdateAvatar}
-                    />
-                    <AddPlacePopup
-                      isOpen={isAddPlacePopupOpen}
-                      onClose={closeAllPopups}
-                      onAddCard={handleAddCard}
-                      isSaving={isSaving}
-                    />
-                    <PopupWithForm
-                      name="confirm"
-                      title="Вы уверены?"
-                      isOpen={cardToRemove.link}
-                      onClose={closeAllPopups}
-                      onSubmit={handleCardDelete}
-                      buttonText="Да"
-                      isSaving={isSaving}
-                      isValid={true}
-                    />
-                    <ImagePopup card={selectedCard} onClose={closeAllPopups} />
                     <Footer />
                   </>
                 ) : (
@@ -353,6 +321,36 @@ function App() {
               }
             />
           </Routes>
+          <EditProfilePopup
+            isOpen={isEditProfilePopupOpen}
+            onClose={closeAllPopups}
+            onUpdateUser={handleUpdateUser}
+            isSaving={isSaving}
+            onEditAvatar={handleUpdateAvatar}
+          />
+          <EditAvatarPopup
+            isOpen={isEditAvatarPopupOpen}
+            onClose={closeAllPopups}
+            isSaving={isSaving}
+            onEditAvatar={handleUpdateAvatar}
+          />
+          <AddPlacePopup
+            isOpen={isAddPlacePopupOpen}
+            onClose={closeAllPopups}
+            onAddCard={handleAddCard}
+            isSaving={isSaving}
+          />
+          <PopupWithForm
+            name="confirm"
+            title="Вы уверены?"
+            isOpen={cardToRemove.link}
+            onClose={closeAllPopups}
+            onSubmit={handleCardDelete}
+            buttonText="Да"
+            isSaving={isSaving}
+            isValid={true}
+          />
+          <ImagePopup card={selectedCard} onClose={closeAllPopups} />
         </div>
       </div>
     </CurrentUserContext.Provider>
