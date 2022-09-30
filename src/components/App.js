@@ -15,6 +15,11 @@ import AddPlacePopup from './AddPlacePopup'
 import EditAvatarPopup from './EditAvatarPopup'
 import EntryForm from './EntryForm'
 import PopupAlert from './PopupAlert'
+import {
+  handleRegister,
+  handleLogin,
+  handleCheckAuth,
+} from '../utils/authRequests'
 
 function App() {
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false)
@@ -29,8 +34,6 @@ function App() {
   const [isSaving, setIsSaving] = useState(false)
   const [isLogged, setIsLogged] = useState(false)
   const [isTopBarOpen, setIsTopBarOpen] = useState(false)
-
-  const BASE_URL = 'https://auth.nomoreparties.co'
 
   const navigate = useNavigate()
 
@@ -52,14 +55,7 @@ function App() {
       return
     }
     setIsLoading(true)
-    fetch(`${BASE_URL}/users/me`, {
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${localStorage.getItem('token')}`,
-      },
-      method: 'GET',
-    })
-      .then((res) => (res.ok ? res.json() : Promise.reject(res.statusText)))
+    handleCheckAuth()
       .then((res) => {
         setIsLogged(true)
         setCurrentUser((old) => {
@@ -74,16 +70,9 @@ function App() {
   function handleSubmitRegistration(email, password) {
     setAlertPopupState((old) => ({ ...old, mode: 'register' }))
     setIsLoading(true)
-    return fetch(`${BASE_URL}/signup`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-      body: JSON.stringify({ password, email }),
-    })
-      .then((res) => res.ok && res.json())
+    handleRegister(password, email)
       .then((res) => {
-        if (!!res.data) {
+        if (res.data) {
           setAlertPopupState((old) => ({ ...old, success: true }))
           navigate('./sign-in')
         } else setAlertPopupState((old) => ({ ...old, success: false }))
@@ -101,14 +90,7 @@ function App() {
   function handleSubmitLogin(email, password) {
     setAlertPopupState((old) => ({ ...old, mode: 'login' }))
     setIsLoading(true)
-    return fetch(`${BASE_URL}/signin`, {
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      method: 'POST',
-      body: JSON.stringify({ password, email }),
-    })
-      .then((res) => res.ok && res.json())
+    handleLogin(password, email)
       .then((res) => {
         if (!!res.token) {
           localStorage.setItem('token', res.token)
