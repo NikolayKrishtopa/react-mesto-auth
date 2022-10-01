@@ -27,7 +27,7 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false)
   const [alertPopupState, setAlertPopupState] = useState({})
   const [selectedCard, setSelectedCard] = useState({})
-  const [isLoading, setIsLoading] = useState(true)
+  const [isLoading, setIsLoading] = useState(false)
   const [currentUser, setCurrentUser] = useState({})
   const [cards, setCards] = useState([])
   const [cardToRemove, setCardToRemove] = useState({})
@@ -38,6 +38,8 @@ function App() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    if (!isLogged) return
+    setIsLoading(true)
     Promise.all([api.getInititalCards(), api.getUserInfo()])
       .then(([cardsArr, userData]) => {
         setCards(cardsArr)
@@ -47,7 +49,7 @@ function App() {
       })
       .catch((err) => console.log(err))
       .finally(() => setIsLoading(false))
-  }, [])
+  }, [isLogged])
 
   useEffect(() => {
     if (!localStorage.getItem('token')) {
